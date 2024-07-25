@@ -5,7 +5,7 @@
 
 namespace transport_catalogue {
     void TransportCatalogue::AddBus(const Bus& bus) {
-        buses_.push_back(std::move(bus));
+        buses_.push_back(bus);
         busname_to_bus_[buses_.back().name] = &buses_.back();
         for (const auto& stop : buses_.back().stops) {
             stopname_to_buses_[stop->name].insert(&buses_.back());
@@ -13,42 +13,42 @@ namespace transport_catalogue {
     }
 
     void TransportCatalogue::AddStop(const Stop& stop) {
-        stops_.push_back(std::move(stop));
+        stops_.push_back(stop);
         stopname_to_stop_[stops_.back().name] = &stops_.back();
     }
 
-    const TransportCatalogue::Bus* TransportCatalogue::FindBus(std::string_view name) const {
-        return busname_to_bus_.count(name) ? busname_to_bus_.at(name) : nullptr;
+    const Bus* TransportCatalogue::FindBus(std::string_view name) const {
+        auto founded_bus = busname_to_bus_.find(name);
+        return founded_bus != busname_to_bus_.end() ? founded_bus->second : nullptr;
     }
 
-    const TransportCatalogue::Stop* TransportCatalogue::FindStop(std::string_view name) const {
-        return stopname_to_stop_.count(name) ? stopname_to_stop_.at(name) : nullptr;
+    const Stop* TransportCatalogue::FindStop(std::string_view name) const {
+        auto founded_stop = stopname_to_stop_.find(name);
+        return founded_stop != stopname_to_stop_.end() ? founded_stop->second : nullptr;
     }
 
-    const std::unordered_set<const TransportCatalogue::Bus*> TransportCatalogue::FindBusesByStop(const TransportCatalogue::Stop* stop) const {
-        std::unordered_set<const TransportCatalogue::Bus*> no_bus;
-        return stopname_to_buses_.count(stop->name) ? stopname_to_buses_.at(stop->name) : no_bus;
+    const std::unordered_set<const Bus*>* TransportCatalogue::FindBusesByStop(const Stop* stop) const {
+        auto founded_buses = stopname_to_buses_.find(stop->name);
+        return founded_buses != stopname_to_buses_.end() ? &founded_buses->second : nullptr;
     }
-    
-    namespace get {
-        int UniqueStopsNum(const TransportCatalogue::Bus& bus) {
-            std::unordered_set<std::string_view> unique_stops;
-            for (const auto& stop : bus.stops) {
-                unique_stops.insert(stop->name);
-            }
-            return static_cast<int>(unique_stops.size());
+    int GetUniqueStopsNum(const Bus& bus) {
+        std::unordered_set<std::string_view> unique_stops;
+        for (const auto& stop : bus.stops) {
+            unique_stops.insert(stop->name);
         }
+        return static_cast<int>(unique_stops.size());
+    }
 
-        int StopsNum(const TransportCatalogue::Bus& bus) {
+    int GetStopsNum(const Bus& bus) {
             return static_cast<int>(bus.stops.size());
-        }
+    }
 
-        double RouteLength(const TransportCatalogue::Bus& bus) {
-            double route_length = 0.;
-            for (size_t i = 0; i + 1 < bus.stops.size(); ++i) {
-                route_length += geo::ComputeDistance(bus.stops[i]->coordinates, bus.stops[i + 1]->coordinates);
-            }
-            return route_length;
+    double GetRouteLength(const Bus& bus) {
+        double route_length = 0.;
+        for (size_t i = 0; i + 1 < bus.stops.size(); ++i) {
+            route_length += geo::ComputeDistance(bus.stops[i]->coordinates, bus.stops[i + 1]->coordinates);
         }
+        return route_length;
     }
 }
+

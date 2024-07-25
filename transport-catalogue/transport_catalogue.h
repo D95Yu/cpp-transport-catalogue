@@ -10,8 +10,6 @@
 
 #include "geo.h"
 namespace transport_catalogue {
-	class TransportCatalogue {
-		public:
 
 	struct Stop {
 		std::string name;
@@ -23,11 +21,13 @@ namespace transport_catalogue {
 		std::vector<const Stop*> stops;
 	};
 
+	class TransportCatalogue {
+	public:
 	void AddBus(const Bus& bus);
 	void AddStop(const Stop& stop);
 	const Bus* FindBus(std::string_view name) const;
 	const Stop* FindStop(std::string_view name) const;
-	const std::unordered_set<const Bus*> FindBusesByStop(const Stop*) const;
+	const std::unordered_set<const Bus*>* FindBusesByStop(const Stop* stop) const;
 
 	private: 
 	std::deque<Stop> stops_;
@@ -37,10 +37,8 @@ namespace transport_catalogue {
 	std::unordered_map<std::string_view, std::unordered_set<const Bus*>> stopname_to_buses_;
 };
 
-	namespace get {
-		int UniqueStopsNum(const TransportCatalogue::Bus& bus);
-		int StopsNum(const TransportCatalogue::Bus& bus);
-		double RouteLength(const TransportCatalogue::Bus& bus);
-	}
+	int GetUniqueStopsNum(const Bus& bus);
+	int GetStopsNum(const Bus& bus);
+	double GetRouteLength(const Bus& bus);
 }
 

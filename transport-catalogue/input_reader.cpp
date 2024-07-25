@@ -116,30 +116,27 @@ namespace input_reader {
         }
     }
 
-    void InputReader::ApplyCommands([[maybe_unused]] transport_catalogue::TransportCatalogue& catalogue) const {
+    void InputReader::ApplyCommands(transport_catalogue::TransportCatalogue& catalogue) const {
         using namespace transport_catalogue;
-        std::deque<CommandDescription> buffer;
+
         for (const auto& request : commands_) {
-            RequestType request_type = GetRequestType(request.command);
-            if (request_type == RequestType::BUS) {
-                buffer.push_back(std::move(request));
-            }else if (request_type == RequestType::STOP) {
-                TransportCatalogue::Stop stop;
+            if (GetRequestType(request.command) == RequestType::STOP) {
+                Stop stop;
                 stop.name = request.id;
                 stop.coordinates = detail::ParseCoordinates(request.description);
                 catalogue.AddStop(std::move(stop));
-            }else {
-                continue;
             }
         }
-        for (const auto& request_bus : buffer) {
-            TransportCatalogue::Bus bus;
-            bus.name = request_bus.id;
-            std::vector<std::string_view> stops_names = detail::ParseRoute(request_bus.description);
-            for (const auto& stop_name : stops_names) {
-                bus.stops.push_back(catalogue.FindStop(stop_name));
+        for (const auto& request : commands_) {
+            if (GetRequestType(request.command) == RequestType::BUS) {
+                Bus bus;
+                bus.name = request.id;
+                std::vector<std::string_view> stops_names = detail::ParseRoute(request.description);
+                for (const auto& stop_name : stops_names) {
+                    bus.stops.push_back(catalogue.FindStop(stop_name));
+                }
+                catalogue.AddBus(std::move(bus));
             }
-            catalogue.AddBus(std::move(bus));
         }
     }
 }
