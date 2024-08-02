@@ -31,11 +31,24 @@ namespace input_reader {
             }
 
             auto not_space2 = str.find_first_not_of(' ', comma + 1);
+            auto comma2 = str.find(',', comma + 1);
+
 
             double lat = std::stod(std::string(str.substr(not_space, comma - not_space)));
-            double lng = std::stod(std::string(str.substr(not_space2)));
+            //double lng = std::stod(std::string(str.substr(not_space2)));
+            double lng = std::stod(std::string(str.substr(not_space2, comma2 - not_space2)));
+
 
             return {lat, lng};
+        }
+
+        std::pair<std::string_view, size_t> ParseDistance(std::string_view str) {
+                auto not_space = str.find_first_not_of(' ');
+                auto m_pos = str.find('m');
+                size_t distance = std::stoull(std::string(str.substr(not_space, m_pos - not_space)));
+                auto to_pos = str.find('t', m_pos + 1);
+                std::string_view stop_name = str.substr(str.find_first_not_of(' ', to_pos + 2));
+                return {stop_name, distance};
         }
 
         /**
@@ -125,6 +138,17 @@ namespace input_reader {
                 stop.name = request.id;
                 stop.coordinates = detail::ParseCoordinates(request.description);
                 catalogue.AddStop(std::move(stop));
+            }
+        }
+        for (const auto& request : commands_) {
+            if (GetRequestType(request.command) == RequestType::STOP) {
+                std::vector<std::string_view> strings = detail::Split(request.description, ',');
+                if (strings.size() > 2) {
+                    for (size_t i = 2; i < strings.size(); ++i) {
+                        std::pair<std::string_view, size_t> dist_to_next_stop = detail::ParseDistance(strings[i]);
+                        catalogue.SetDistanceBtwStops(catalogue.FindStop(request.id), catalogue.FindStop(dist_to_next_stop.first), dist_to_next_stop.second);
+                    }
+                }
             }
         }
         for (const auto& request : commands_) {
