@@ -11,12 +11,7 @@ using namespace svg;
 namespace render {
     MapRenderer::MapRenderer(const RenderSettings& settings) 
         : settings_(settings) {}
-    
-    /*RenderSettings MapRenderer::GetRenderSettings() const {
-        return settings_;
-    } */
 
-    //auto comp = [](const Stop* lhs, const Stop* rhs) {return lhs->name < rhs->name;};
     SphereProjector MapRenderer::GetSphereProjector(const std::set<const Stop*, decltype(comp)> stops) {
         return SphereProjector(stops.begin(), stops.end(), settings_.width, settings_.height, settings_.padding);
     }

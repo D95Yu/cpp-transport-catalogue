@@ -17,34 +17,14 @@ using namespace render;
 RequestHandler::RequestHandler(const TransportCatalogue& catalogue, MapRenderer& renderer) 
     : catalogue_(catalogue), renderer_(renderer) {}
 
-/*std::set<geo::Coordinates> RequestHandler::GetStopsCoordinates() const {
-    std::vector<geo::Coordinates> coords;
-    const std::map<std::string_view, const Bus*>* buses = catalogue_.GetBuses();
-    if (!buses) {
-        return coords;
-    }
-}*/
-
-
-
-//std::vector<svg::Polyline> RequestHandler::GetPolylines(const std::map<std::string_view, const Bus*>* buses) const {
 svg::Polyline RequestHandler::GetPolyline(std::vector<const Stop*> stops, SphereProjector& proj, size_t& color_index) const {
     
-    //auto comp = [](const Stop* lhs, const Stop* rhs) {return lhs->name < rhs->name;};
     svg::Polyline polyline;
     for (const auto& stop : stops) {
         polyline.AddPoint(proj(stop->coordinates));
     }
     renderer_.SetLineProperties(polyline, color_index);
     return polyline;
-
-    //std::set<const Stop*, typedef(comp)> stops;
-    /*std::vector<geo::Coordinates> coords = GetStopsCoordinates();
-
-    if (coords.empty()) {
-        return polylines;
-    }
-    SphereProjector proj = renderer_.GetSphereProjector(coords);*/
 }
 
 svg::Document RequestHandler::RenderMap() {
@@ -54,7 +34,6 @@ svg::Document RequestHandler::RenderMap() {
     if (!buses) {
         std::cout << "No buses";
     }
-    //auto comp = [](const Stop* lhs, const Stop* rhs) {return lhs->name < rhs->name;};
     std::set<const Stop*, decltype(comp)> stops_(comp);
     for (const auto& [busname, bus] : *buses) {
         for (const auto& stop : bus->stops) {
@@ -82,15 +61,12 @@ svg::Document RequestHandler::RenderMap() {
     for (const auto& text : text_) {
         doc.Add(text);
     }
-
     for (const auto& stop : stops_) {
         doc.Add(renderer_.GetCircle(stop, proj));
     }
-
     for (const auto& stop : stops_) {
         doc.Add(renderer_.GetStopText(stop, proj, true));
         doc.Add(renderer_.GetStopText(stop, proj, false));
     }
-
     return doc;
 }

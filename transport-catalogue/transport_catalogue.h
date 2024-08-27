@@ -14,16 +14,6 @@
 
 namespace transport_catalogue {
 
-	/*struct Stop {
-		std::string name;
-		geo::Coordinates coordinates;
-	};
-
-	struct Bus {
-		std::string name;
-		std::vector<const Stop*> stops;
-	};*/
-
 	class TransportCatalogue {
 	public:
 	void AddBus(const Bus& bus);

@@ -11,8 +11,6 @@
 
 namespace svg {
 
-//using Color = std::string;
-
 // Объявив в заголовочном файле константу со спецификатором inline,
 // мы сделаем так, что она будет одной на все единицы трансляции,
 // которые подключают этот заголовок.
@@ -327,7 +325,6 @@ public:
      Document doc;
      doc.Add(Circle().SetCenter({20, 30}).SetRadius(15));
     */
-    // void Add(???);
     Document() {}
 
 
