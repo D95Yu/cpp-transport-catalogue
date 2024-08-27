@@ -40,6 +40,10 @@ namespace transport_catalogue {
         return founded_dist != distance_btw_stops_.end() ? founded_dist->second : 0;
     }
 
+    const std::map<std::string_view, const Bus*>* TransportCatalogue::GetBuses() const {
+        return &busname_to_bus_;
+    }
+
 	void TransportCatalogue::SetDistanceBtwStops(const Stop* from, const Stop* to, size_t distance) {
         distance_btw_stops_.insert({{from, to}, distance});
     }
@@ -78,4 +82,3 @@ namespace transport_catalogue {
         return route_length;
     }
 }
-
