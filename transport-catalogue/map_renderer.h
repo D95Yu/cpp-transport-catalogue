@@ -39,6 +39,8 @@ namespace render {
 
     class SphereProjector {
     public:
+
+        SphereProjector()  = default;
         // points_begin и points_end задают начало и конец интервала элементов geo::Coordinates
         template <typename PointInputIt>
         SphereProjector(PointInputIt stops_begin, PointInputIt stops_end,
@@ -98,7 +100,7 @@ namespace render {
         }
 
     private:
-        double padding_;
+        double padding_ = 0.;
         double min_lon_ = 0;
         double max_lat_ = 0;
         double zoom_coeff_ = 0;
@@ -106,20 +108,24 @@ namespace render {
 
     class MapRenderer {
     public: 
-        MapRenderer(const RenderSettings& render_settings);
+        explicit MapRenderer(const RenderSettings& render_settings);
 
-        SphereProjector GetSphereProjector(const std::set<const Stop*, decltype(comp)> stops);
-        svg::Circle GetCircle(const Stop* stop, SphereProjector& proj);
-        svg::Text GetStopText(const Stop* stop, SphereProjector& proj, bool is_under_layer);
-        void SetUnderLayerText(svg::Text& text);
-        svg::Text GetBaseText(const Stop* stop, SphereProjector& proj, [[maybe_unused]] size_t& color_index, const std::string& busname, bool is_under_layer);
-        void SetLineProperties(svg::Polyline& polyline, size_t& color_index);
+        void FillDocument(svg::Document& doc, const std::map<std::string_view, const Bus*>* buses);
+        
 
     private:
         const RenderSettings& settings_;
-
+        SphereProjector proj_;
+        size_t color_index_ = 0;
         
-        svg::Color GetPaletteColor(size_t& color_index);
+        svg::Color GetPaletteColor();
+        svg::Polyline GetPolyline(std::vector<const Stop*> stops);
+        SphereProjector GetSphereProjector(const std::set<const Stop*, decltype(comp)> stops);
+        svg::Circle GetCircle(const Stop* stop);
+        svg::Text GetStopText(const Stop* stop, bool is_under_layer);
+        void SetUnderLayerText(svg::Text& text);
+        svg::Text GetBaseText(const Stop* stop, const std::string& busname, bool is_under_layer);
+        void SetLineProperties(svg::Polyline& polyline);
     };
 }
 

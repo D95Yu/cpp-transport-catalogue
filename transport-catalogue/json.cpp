@@ -232,7 +232,7 @@ Node LoadNode(istream& input) {
 Node::Node(std::nullptr_t) 
     : Node() {}
 
-Node::Node(Array array) 
+/*Node::Node(Array array) 
     : value_(std::move(array)) {}
 
 Node::Node(Dict dict)
@@ -248,7 +248,7 @@ Node::Node(double value)
     : value_(value) {}
 
 Node::Node(std::string value) 
-    : value_(std::move(value)) {}
+    : value_(std::move(value)) {}*/
 
 bool Node::IsInt() const {
     return std::holds_alternative<int>(value_);

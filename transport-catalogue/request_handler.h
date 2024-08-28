@@ -31,18 +31,11 @@
 class RequestHandler {
 public:
 
-RequestHandler(const transport_catalogue::TransportCatalogue& catalogue, render::MapRenderer& renderer);
-
+RequestHandler(const transport_catalogue::TransportCatalogue& catalogue,  render::MapRenderer& renderer);
 
 svg::Document RenderMap();
     
-
 private:
 const transport_catalogue::TransportCatalogue& catalogue_;
-render::MapRenderer& renderer_;
-
-std::vector<geo::Coordinates> GetStopsCoordinates() const;
-
-svg::Polyline GetPolyline(std::vector<const Stop*> stops, render::SphereProjector& proj, size_t& color_index) const;
-
+ render::MapRenderer& renderer_;
 };

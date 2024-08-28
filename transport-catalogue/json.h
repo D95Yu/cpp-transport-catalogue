@@ -25,14 +25,18 @@ public:
    /* Реализуйте Node, используя std::variant */
     using Value = std::variant<std::nullptr_t, Array, Dict, bool, int, double, std::string>;
 
+    template <typename Type>
+    Node(Type value) 
+        : value_(std::move(value)){}
+
     Node() = default;
     Node(std::nullptr_t);
-    Node(Array array);
+    /*Node(Array array);
     Node(Dict dict);
     Node(bool value);
     Node(int value);
     Node(double value);
-    Node(std::string value);
+    Node(std::string value);*/
 
     const Value& GetValue() const { return value_; }
 
