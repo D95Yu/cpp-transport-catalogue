@@ -232,24 +232,6 @@ Node LoadNode(istream& input) {
 Node::Node(std::nullptr_t) 
     : Node() {}
 
-/*Node::Node(Array array) 
-    : value_(std::move(array)) {}
-
-Node::Node(Dict dict)
-    : value_(std::move(dict)) {}
-
-Node::Node(bool value)
-    : value_(value) {}
-
-Node::Node(int value) 
-    : value_(value) {}
-
-Node::Node(double value) 
-    : value_(value) {}
-
-Node::Node(std::string value) 
-    : value_(std::move(value)) {}*/
-
 bool Node::IsInt() const {
     return std::holds_alternative<int>(value_);
 }
@@ -278,7 +260,7 @@ bool Node::IsArray() const {
     return std::holds_alternative<Array>(value_);
 }
 
-bool Node::IsMap() const {
+bool Node::IsDict() const {
     return std::holds_alternative<Dict>(value_);
 }
 
@@ -320,8 +302,8 @@ const Array& Node::AsArray() const {
     return std::get<Array>(value_);
 }
 
-const Dict& Node::AsMap() const {
-    if (!IsMap()) {
+const Dict& Node::AsDict() const {
+    if (!IsDict()) {
         throw std::logic_error("value is not map");
     }
     return std::get<Dict>(value_);

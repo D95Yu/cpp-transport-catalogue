@@ -10,6 +10,7 @@
 #include "transport_catalogue.h"
 #include "request_handler.h"
 #include "json.h"
+#include "json_builder.h"
 #include "geo.h"
 #include "map_renderer.h"
 
@@ -35,12 +36,12 @@ namespace json_reader {
         std::istream& input_;
         std::ostream& output_;
 
-        json::Dict GetMapByRequest(const StatRequest& stat_request, RequestHandler& request_handler);
+        json::Node GetMapByRequest(const StatRequest& stat_request, RequestHandler& request_handler);
         svg::Color GetNodeColor(const json::Node& node);
         void FillRenderSettings(const json::Dict& dict, render::RenderSettings& render_settings);
         void FillStatRequests(const json::Array& array, std::vector<StatRequest>& stat_requests);
-        json::Dict GetStopByRequest(transport_catalogue::TransportCatalogue& catalogue, const StatRequest& stat_request);
-        json::Dict GetBusByRequest(transport_catalogue::TransportCatalogue& catalogue, const StatRequest& stat_request);
+        json::Node GetStopByRequest(transport_catalogue::TransportCatalogue& catalogue, const StatRequest& stat_request);
+        json::Node GetBusByRequest(transport_catalogue::TransportCatalogue& catalogue, const StatRequest& stat_request);
         Stop GetStopFromNode(const json::Dict& dict);
         Bus GetBusFromNode(transport_catalogue::TransportCatalogue& catalogue, const json::Dict& dict);
         void SetStopsDistance(transport_catalogue::TransportCatalogue& catalogue, const json::Dict& dict);

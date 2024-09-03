@@ -31,14 +31,9 @@ public:
 
     Node() = default;
     Node(std::nullptr_t);
-    /*Node(Array array);
-    Node(Dict dict);
-    Node(bool value);
-    Node(int value);
-    Node(double value);
-    Node(std::string value);*/
 
     const Value& GetValue() const { return value_; }
+    Value& GetValue()  { return value_; }
 
     bool IsInt() const;
     bool IsDouble() const;
@@ -47,14 +42,14 @@ public:
     bool IsString() const;
     bool IsNull() const;
     bool IsArray() const;
-    bool IsMap() const;
+    bool IsDict() const;
 
     int AsInt() const;
     bool AsBool() const;
     double AsDouble() const;
     const std::string& AsString() const;
     const Array& AsArray() const;
-    const Dict& AsMap() const;
+    const Dict& AsDict() const;
 
 private:
     Value value_;
