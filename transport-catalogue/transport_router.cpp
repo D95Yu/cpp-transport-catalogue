@@ -55,9 +55,9 @@ void TransportRouter::AddBusEdge(const Stop* from, const Stop* to, const std::st
 }
 
 void TransportRouter::AddBus(const Bus* bus) {
-    for (size_t i = 0; i < bus->stops.size() -1; ++i) {
-        size_t distance = 0.;
-        size_t distance_inverse = 0.;
+    for (size_t i = 0; i < bus->stops.size() - 1; ++i) {
+        size_t distance = 0;
+        size_t distance_inverse = 0;
         for (size_t j = i; j < bus->stops.size() - 1; ++j) {
             distance += catalogue_.GetDistanceBtwStops(bus->stops[j], bus->stops[j + 1]);
             AddBusEdge(bus->stops[i], bus->stops[j + 1], bus->name, static_cast<int>(j - i + 1), distance);
