@@ -44,6 +44,14 @@ namespace transport_catalogue {
         return &busname_to_bus_;
     }
 
+    const std::unordered_map<std::string_view, const Stop*>* TransportCatalogue::GetStops() const {
+        return &stopname_to_stop_;
+    }
+
+    size_t TransportCatalogue::GetStopsCount() const {
+        return stops_.size();
+    }
+
 	void TransportCatalogue::SetDistanceBtwStops(const Stop* from, const Stop* to, size_t distance) {
         distance_btw_stops_.insert({{from, to}, distance});
     }

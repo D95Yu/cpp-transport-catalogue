@@ -3,11 +3,13 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <optional>
 #include <string_view>
 #include <string>
 #include <set>
 
 #include "transport_catalogue.h"
+#include "transport_router.h"
 #include "svg.h"
 #include "geo.h"
 #include "map_renderer.h"
@@ -37,5 +39,5 @@ svg::Document RenderMap();
     
 private:
 const transport_catalogue::TransportCatalogue& catalogue_;
- render::MapRenderer& renderer_;
+render::MapRenderer& renderer_;
 };

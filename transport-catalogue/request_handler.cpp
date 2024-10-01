@@ -15,7 +15,8 @@ using namespace render;
  */
 
 RequestHandler::RequestHandler(const TransportCatalogue& catalogue, MapRenderer& renderer) 
-    : catalogue_(catalogue), renderer_(renderer) {}
+                                                        : catalogue_(catalogue), renderer_(renderer) {                        
+}
 
 svg::Document RequestHandler::RenderMap() {
     svg::Document doc;

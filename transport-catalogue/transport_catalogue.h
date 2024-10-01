@@ -24,6 +24,9 @@ namespace transport_catalogue {
 	size_t GetDistanceBtwStops(const Stop* from, const Stop* to) const;
 	void SetDistanceBtwStops(const Stop* from, const Stop* to, size_t distance);
 	const std::map<std::string_view, const Bus*>* GetBuses() const;
+	const std::unordered_map<std::string_view, const Stop*>* GetStops() const;
+	size_t GetStopsCount() const;
+
 
 	struct Hasher {
 		size_t operator()(const std::pair<const Stop*, const Stop*> stops) const;

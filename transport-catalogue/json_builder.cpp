@@ -21,29 +21,6 @@ namespace json {
 
     Node Builder::GetNode(Node::Value value) {
         return Node(std::move(value));
-
-        /*if (std::holds_alternative<std::nullptr_t>(value)) {
-            return Node(std::get<std::nullptr_t>(value));
-        }
-        if (std::holds_alternative<Array>(value)) {
-            return Node(std::get<Array>(value));
-        }
-        if (std::holds_alternative<Dict>(value)) {
-            return Node(std::get<Dict>(value));
-        }
-        if (std::holds_alternative<bool>(value)) {
-            return Node(std::get<bool>(value));
-        }
-        if (std::holds_alternative<int>(value)) {
-            return Node(std::get<int>(value));
-        }
-        if (std::holds_alternative<double>(value)) {
-            return Node(std::get<double>(value));
-        }
-        if (std::holds_alternative<std::string>(value)) {
-            return Node(std::get<std::string>(value));
-        }
-        return {};*/
     }
 
     Builder& Builder::Value(Node::Value value) {
@@ -79,12 +56,12 @@ namespace json {
                 throw std::logic_error("AddContainer()-IsDict() invalid error"s);
             }
             auto& dict = std::get<Dict>(top_node->GetValue());
-            auto [it, _] = dict.emplace(std::move(*key_), Node(std::move(container)));
+            auto [it, _] = dict.emplace(*key_, Node(container));
             key_ = std::nullopt;
             nodes_stack_.emplace_back(&it->second);
         }else if (top_node->IsArray()) {
             auto& array = std::get<Array>(top_node->GetValue());
-            array.emplace_back(Node(std::move(container)));
+            array.emplace_back(Node(container));
             nodes_stack_.emplace_back(&array.back());
         }else {
             throw std::logic_error("AddContainer()-IsArray() invalid error"s);

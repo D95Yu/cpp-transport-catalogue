@@ -111,6 +111,11 @@ namespace json_reader {
                 if (dict.at("type").AsString() == "Map") {
                     stat_requests.emplace_back(request);
                     continue;
+                }else if(dict.at("type").AsString() == "Route") {
+                    request.stop_from = dict.at("from").AsString();
+                    request.stop_to = dict.at("to").AsString();
+                    stat_requests.emplace_back(request);
+                    continue;
                 }
                 request.name = dict.at("name").AsString();
                 stat_requests.emplace_back(request);
@@ -150,11 +155,19 @@ namespace json_reader {
         }
     }
 
-    void JsonReader::FillTransportCatalogue(TransportCatalogue& catalogue, std::vector<StatRequest>& stat_requests, RenderSettings& settings) {
+    void JsonReader::FillRoutingSettings(const Dict& dict, TransportRouter& router) {
+        int bus_wait_time = dict.at("bus_wait_time"s).AsInt();
+        double bus_velocity = dict.at("bus_velocity"s).AsDouble();
+        router.SetTimeVelocitySettings(bus_wait_time, bus_velocity);    
+    }
+
+    void JsonReader::FillTransportCatalogue(TransportCatalogue& catalogue, std::vector<StatRequest>& stat_requests, 
+                                                RenderSettings& settings, TransportRouter& router) {
         Node first_node = LoadInputNode();
         try {
             ParseNodeBase(catalogue, first_node.AsDict().at("base_requests"s).AsArray());
             FillRenderSettings(first_node.AsDict().at("render_settings"s).AsDict(), settings);
+            FillRoutingSettings(first_node.AsDict().at("routing_settings"s).AsDict(), router);
             FillStatRequests(first_node.AsDict().at("stat_requests"s).AsArray(), stat_requests);
         }catch(...) {
             std::cout << "FillTransportCatalogue invalid error"s;
@@ -211,7 +224,38 @@ namespace json_reader {
         return builder.Build();
     }
 
-    void JsonReader::PrintStat(TransportCatalogue& catalogue, const std::vector<StatRequest>& stat_requests, RequestHandler& request_handler) {
+    Node JsonReader::GetRouteByRequest(const StatRequest& stat_request, TransportRouter& router) {
+        Builder builder{};
+        builder.StartDict();
+        const auto found_route = router.FindRoute(stat_request.stop_from, stat_request.stop_to);
+        if (!found_route) {
+            builder.Key("error_message"s).Value("not found"s)
+                    .Key("request_id"s).Value(stat_request.id).EndDict();
+            return builder.Build();
+        }
+        builder.Key("request_id"s).Value(stat_request.id)
+                .Key("total_time"s).Value(found_route.value().total_time)
+                .Key("items"s).StartArray();
+        for (const auto& item : found_route.value().items) {
+            builder.StartDict();
+            if (item.type == "Wait"s) {
+                builder.Key("type"s).Value(item.type)
+                        .Key("time"s).Value(item.time)
+                        .Key("stop_name"s).Value(item.name);
+            }else if(item.type == "Bus"s) {
+                builder.Key("type"s).Value(item.type)
+                        .Key("bus"s).Value(item.name)
+                        .Key("span_count"s).Value(item.span)
+                        .Key("time"s).Value(item.time);
+            }
+            builder.EndDict();
+        }
+        builder.EndArray().EndDict();
+        return builder.Build();
+    }
+
+    void JsonReader::PrintStat(TransportCatalogue& catalogue, const std::vector<StatRequest>& stat_requests, 
+                                    RequestHandler& request_handler, TransportRouter& router) {
         Builder builder{};
         builder.StartArray();
         for (size_t i = 0; i < stat_requests.size(); ++i) {
@@ -221,6 +265,8 @@ namespace json_reader {
                 builder.Value(GetBusByRequest(catalogue, stat_requests[i]).GetValue());
             }else if(stat_requests[i].type == "Map") {
                 builder.Value(GetMapByRequest(stat_requests[i], request_handler).GetValue());
+            }else if (stat_requests[i].type == "Route") {
+                builder.Value(GetRouteByRequest(stat_requests[i], router).GetValue());
             }
         }
         builder.EndArray();
